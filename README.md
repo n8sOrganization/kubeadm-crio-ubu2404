@@ -1,6 +1,6 @@
 # Installing CRI-O for Kubeadm v1.26.1 on Ubuntu Server v22.04
 
-This doc will get you up and running with a K8s cluster on Ubuntu 22.04, complete with Calcio cluster networking. I've modified the tolerations for Calico controller pods so that you can run a fully functional K8s platform with just a single controlplane node (It's commented in the manifest for calico. This is obviously not something you'd do outside of a lab)
+This doc will get you up and running with a K8s cluster on Ubuntu 22.04, complete with Calcio cluster networking. I've modified the tolerations for Calico controller pods so that you can run a fully functional K8s platform with just a single control plane node (It's commented in the manifest for calico. This is obviously not something you'd do outside of a lab)
 
 With a single node, you will end up with something like this:
 ![image](https://user-images.githubusercontent.com/45366367/216838964-10ad77e5-fc9e-4bd8-8e77-4ffc93c8958c.png)
@@ -102,7 +102,7 @@ sudo rm -rf /etc/cni
 sudo apt-get update
 ```
 
-*Install utils for apt-get commands
+*Install utils for apt-get commands*
 ```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl
 ```
@@ -182,7 +182,7 @@ EOF
 
 To complete your cluster, repeat the disable swap, enable ip forward, add br_netfilter module, and the installation steps for Kubeadm on a fresh Linux host. Then submit the `join` command on that host.
 
-*From the controlplanenode*
+*From the control plane node*
 ```bash
 sudo kubeadm token create --print-join-command
 ```
