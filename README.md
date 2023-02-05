@@ -5,7 +5,7 @@ This doc will get you up and running with a K8s cluster on Ubuntu 22.04, complet
 With a single node, you will end up with something like this:
 ![image](https://user-images.githubusercontent.com/45366367/216838964-10ad77e5-fc9e-4bd8-8e77-4ffc93c8958c.png)
 
-## Configure Linux for Kubeadm and CRI-O
+## Configure Ubuntu for Kubeadm and CRI-O
 
 **1. Update base ubuntu install**
 ```bash
