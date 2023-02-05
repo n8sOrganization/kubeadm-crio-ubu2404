@@ -7,55 +7,55 @@ With a single node, you will end up with something like this:
 
 ## Configure Linux for Kubeadm and CRI-O
 
-*Update base install*
+**1. Update base install**
 ```bash
 sudo apt update && upgrade
 ```
 
-*Install utilities required for subsequent steps*
+**2. Install utilities required for subsequent steps**
 ```bash
 sudo apt install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
 ```
 
-*Disable swap*
+**3. Disable swap**
 ```bash
 sudo swapoff -a
 ```
 
-*Remark out the swap line in the fstab file and save change*
+**4. Remark out the swap line in the fstab file and save change**
 ```bash
 sudo vi  /etc/fstab 
 ```
 
-*Enable ip forwarding* 
+**5. Enable ip forwarding**
 ```bash
 sudo sysctl -w net.ipv4.ip_forward=1
 ```
 
-*Add `net.ipv4.ip_forward = 1` to end of sysctl.conf*
+**6. Add `net.ipv4.ip_forward = 1` to end of sysctl.conf**
 ```bash
 sudo vi /etc/sysctl.conf
 ```
 
-*Load br_netfilter module*
+**7. Load br_netfilter module**
 ```bash
 sudo modprobe br_netfilter
 ```
 
-*Add `br_netfilter` to last line of /etc/modules*
+**8. Add `br_netfilter` to last line of /etc/modules**
 ```bash
 sudo vi /etc/modules
 ```
 
 ## Install CRI-O on Ubuntu 22.04
 
-*Set variables for subsequent commands. OS and VERSION are specific to CRI-O URLs*
+**1. Set variables for subsequent commands. OS and VERSION are specific to CRI-O URLs**
 ```bash
 export OS=xUbuntu_22.04
 export VERSION=1.26
 ```
 
-*Configure apt certs and repos*
+**2. Configure apt certs and repos**
 ```bash
 echo "deb [signed-by=/usr/share/keyrings/libcontainers-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 ```
@@ -72,42 +72,42 @@ curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainer
 curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
 ```
 
-*Update apt and install CRI-O and CRI-O specific runC*
+**3. Update apt and install CRI-O and CRI-O specific runC**
 ```bash
 sudo apt update && sudo apt install -y cri-o cri-o-runc
 ```
 
-*Enable and start CRI-O service*
+**4. Enable and start CRI-O service**
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now crio
 ```
 
-*Check status of service for `running`*
+**5. Check status of service for `running`**
 ```bash
 sudo systemctl status crio
 sudo crio-status info
 sudo crictl info
 ```
 
-*Remove a CNI directory that CRI-O shouldn't have created*
+**6. Remove a CNI directory that CRI-O shouldn't have created**
 ```bash
 sudo rm -rf /etc/cni
 ```
 
 ## Install kubeadm
 
-*Update apt-get*
+**1. Update apt-get**
 ```bash
 sudo apt-get update
 ```
 
-*Install utils for apt-get commands*
+**2. Install utils for apt-get commands**
 ```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl
 ```
 
-*Configure apt-get cert and repo*
+**3. Configure apt-get cert and repo**
 ```bash
 sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 ```
@@ -115,24 +115,24 @@ sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packag
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 ```
 
-*Update apt and install `kubelet`, `kubeadm`, and `kubectl`*
+**4. Update apt and install `kubelet`, `kubeadm`, and `kubectl`**
 ```bash
 sudo apt-get update && sudo apt-get install -y kubelet kubeadm kubectl
 ```
 
-*Pre-fetch Kubeadm images*
+**5. Pre-fetch Kubeadm images**
 ```bash
 sudo kubeadm config images pull
 ```
 
 ## Init Controlplane
 
-*Change CIDRs to whatever makes sense for your environment. Will be using IPIP overlay, so as long as they don't overlap with each other or other advertised CIDRs, you are good*
+**1. Change CIDRs to whatever makes sense for your environment. Will be using IPIP overlay, so as long as they don't overlap with each other or other advertised CIDRs, you are good**
 ```bash
 sudo kubeadm init --pod-network-cidr=10.50.0.0/16 --service-cidr=10.100.0.0/16	 --cri-socket='unix:///var/run/crio/crio.sock'
 ```
 
-*Copy kubeconfig file to $HOME/.kube*
+**2. Copy kubeconfig file to $HOME/.kube**
 ```bash
 mkdir $HOME/.kube
 sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -141,12 +141,12 @@ sudo chown -R $(id -u):$(id -g) $HOME/.kube/config
 
 ## Install Calico CNI plugin with basic IPIP overlay
 
-*Install Calcio operator*
+**1. Install Calcio operator**
 ```bash
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
 ```
 
-*Apply basic Calico IPIP config*
+**2. Apply basic Calico IPIP config**
 ```bash
 cat <<EOF | kubectl create -f -
 apiVersion: operator.tigera.io/v1
@@ -182,9 +182,9 @@ EOF
 
 To complete your cluster, repeat the disable swap, enable ip forward, add br_netfilter module, and the installation steps for Kubeadm on a fresh Linux host. Then submit the `join` command on that host.
 
-*From the control plane node*
+**1. From the control plane node**
 ```bash
 sudo kubeadm token create --print-join-command
 ```
-
+**2. On a fresh node with Kubeadm installed, appy the `join` command from step 1.**
 
