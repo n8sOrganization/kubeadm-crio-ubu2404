@@ -7,9 +7,9 @@ With a single node, you will end up with something like this:
 
 ## Configure Linux for Kubeadm and CRI-O
 
-**1. Update base install**
+**1. Update base ubuntu install**
 ```bash
-sudo apt update && upgrade
+sudo apt update && sudo upgrade
 ```
 
 **2. Install utilities required for subsequent steps**
