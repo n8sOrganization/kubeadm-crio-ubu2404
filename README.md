@@ -1,4 +1,4 @@
-# Installing CRI-O for Kubeadm v1.26.1 on Ubuntu Server v22.04
+# Installing CRI-O and Kubeadm v1.26.1 on Ubuntu Server v22.04
 
 This doc will get you up and running with a K8s cluster on Ubuntu 22.04 `minimal` server install, complete with Calcio cluster networking. I've modified the tolerations for Calico controller pods so that you can run a fully functional K8s platform with just a single control plane node (It's commented in the manifest for calico. This is obviously not something you'd do outside of a lab)
 
