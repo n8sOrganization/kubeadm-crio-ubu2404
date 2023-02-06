@@ -135,7 +135,7 @@ sudo apt-get update && sudo apt-get install -y kubelet kubeadm kubectl
 sudo kubeadm config images pull
 ```
 
-## Init Controlplane
+## Init Control Plane
 
 **1. Change CIDRs to whatever makes sense for your environment. Will be using IPIP overlay, so as long as they don't overlap with each other or other advertised CIDRs, you are good**
 ```bash
