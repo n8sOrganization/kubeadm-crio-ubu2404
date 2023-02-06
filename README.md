@@ -5,7 +5,7 @@ This doc will get you up and running with a K8s cluster on Ubuntu 22.04 `minimal
 With a single node, you will end up with something like this:
 ![image](https://user-images.githubusercontent.com/45366367/216838964-10ad77e5-fc9e-4bd8-8e77-4ffc93c8958c.png)
 
-## Configure Ubuntu for Kubeadm and CRI-O
+## Configure Ubuntu for Kubeadm and CRI-O (These steps are generally required for any CRI runtime and/or K8s)
 
 **1. Update base ubuntu install**
 ```bash
@@ -32,19 +32,29 @@ sudo vi  /etc/fstab
 sudo sysctl -w net.ipv4.ip_forward=1
 ```
 
-**6. Add `net.ipv4.ip_forward = 1` to end of sysctl.conf**
+**6. Add `net.ipv4.ip_forward = 1` to presistent config**
 ```bash
-sudo vi /etc/sysctl.conf
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.ipv4.ip_forward                 = 1
+EOF
 ```
 
-**7. Load br_netfilter module**
+**7. Load br_netfilter and overlay module**
 ```bash
 sudo modprobe br_netfilter
 ```
 
-**8. Add `br_netfilter` to last line of /etc/modules**
 ```bash
-sudo vi /etc/modules
+sudo modprobe overlay
+```
+
+**8. Add `br_netfilter` and `overlay` to persistent config**
+
+``bash
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
 ```
 
 ## Install CRI-O on Ubuntu 22.04
@@ -90,7 +100,7 @@ sudo crio-status info
 sudo crictl info
 ```
 
-**6. Remove a CNI directory that CRI-O shouldn't have created**
+**6. Remove a CNI directory that CRI-O creates, but we don't need**
 ```bash
 sudo rm -rf /etc/cni
 ```
