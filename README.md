@@ -50,12 +50,12 @@ sudo modprobe overlay
 
 **8. Add `br_netfilter` and `overlay` to persistent config**
 
-``bash
+```bash
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
 EOF
-``
+```
 
 ## Install CRI-O on Ubuntu 22.04
 
