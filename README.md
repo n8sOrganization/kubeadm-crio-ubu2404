@@ -35,7 +35,7 @@ sudo sysctl -w net.ipv4.ip_forward=1
 **6. Add `net.ipv4.ip_forward = 1` to presistent config**
 ```bash
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
-net.ipv4.ip_forward                 = 1
+net.ipv4.ip_forward = 1
 EOF
 ```
 
