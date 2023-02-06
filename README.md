@@ -9,7 +9,7 @@ With a single node, you will end up with something like this:
 
 **1. Update base ubuntu install**
 ```bash
-sudo apt update && sudo upgrade
+sudo apt update && sudo apt upgrade
 ```
 
 **2. Install utilities required for subsequent steps**
