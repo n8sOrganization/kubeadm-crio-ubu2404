@@ -9,7 +9,7 @@ With a single node, you will end up with something like this:
 
 **1. Update base ubuntu install**
 ```bash
-sudo apt update && sudo apt upgrade
+sudo apt update && sudo apt -y upgrade
 ```
 
 **2. Install utilities required for subsequent steps**
@@ -84,7 +84,7 @@ curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainer
 
 **3. Update apt and install CRI-O and CRI-O specific runC**
 ```bash
-sudo apt update && sudo apt install -y cri-o cri-o-runc
+sudo apt update && sudo apt -y install cri-o cri-o-runc
 ```
 
 **4. Enable and start CRI-O service**
@@ -127,7 +127,7 @@ echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://a
 
 **4. Update apt and install `kubelet`, `kubeadm`, and `kubectl`**
 ```bash
-sudo apt-get update && sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-get update && sudo apt-get -y install kubelet kubeadm kubectl
 ```
 
 **5. Pre-fetch Kubeadm images**
@@ -157,7 +157,7 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0
 ```
 
 **2. Apply basic Calico IPIP config**
-```bash
+```yaml
 cat <<EOF | kubectl create -f -
 apiVersion: operator.tigera.io/v1
 kind: Installation
