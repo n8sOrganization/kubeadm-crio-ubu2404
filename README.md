@@ -200,12 +200,27 @@ sudo kubeadm token create --print-join-command
 
 ## Misc. Info
 
-> If you switch between IPIP mode and VXLAN mode, and/or if you disable and re-enable BGP, you might experience a symptom of the calico-node pods not being able to re-peer with the other nodes for BGP route sharing. There seems to be a glitch in how the correct host interface is selected. 
->
->To fix this, you can instruct the service to use the specific interface on your host. This is ok so long as all of your interfaces share the same name. I haven't looked far enough into it to determine what I'd do if my hosts had interfaces with different names. I also haven't found how this can be preconfigured when using the Calico operator. 
->
->To fix the issue, apply this change:
+### BGP not working / calico-node pods not starting
+
+If you switch between IPIP mode and VXLAN mode, and/or if you disable and re-enable BGP, you might experience a symptom of the calico-node pods not being able to re-peer with the other nodes for BGP route sharing. The default config for calico-node to determine which interface to select on a host for underlay traffic is first-detected. This typically works on a freshly istalled host. But on one that has many interfaces defined (e.g. one that has been running a CNI plugin with all sorts of veth interfaces), it can become problematic.
+
+To fix this, you can configure the service to use a different selection method. All methods are (https://docs.tigera.io/calico/3.25/reference/configure-calico-node#ip-autodetection-methods)[documented here]. 
+
+To fix the issue, you can try to apply this change:
 
 ```bash
-kubectl set env daemonset/calico-node -n calico-system IP_AUTODETECTION_METHOD=interface=[The name of your hosts interface to the underlay (e.g. ens34)]
+kubectl set env daemonset/calico-node -n calico-system IP_AUTODETECTION_METHOD=kubernetes-internal-ip]
+```
+
+To make it permanent (when using the Calico operator), update your `installation` resource as foolows:
+
+```yaml
+kind: Installation
+metadata:
+  name: default
+spec:
+  calicoNetwork:
+  ...
+    nodeAddressAutodetectionV4:
+      kubernetes-internal-ip: true
 ```
