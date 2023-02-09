@@ -173,6 +173,10 @@ spec:
       encapsulation: IPIP
       natOutgoing: Enabled
       nodeSelector: all()
+    ## The following block is to avoid an issue with interface auto-detection.
+    ## If it causes issues for your installation, remove it.
+    nodeAddressAutodetectionV4:
+      kubernetes: NodeInternalIP
   ## The following block is only added so pods will tolerate 
   ## controlplane nodes. Not normal. If you plan to add
   ## a worker node, it can be removed.
