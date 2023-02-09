@@ -222,5 +222,5 @@ spec:
   calicoNetwork:
   ...
     nodeAddressAutodetectionV4:
-      kubernetes-internal-ip: true
+      kubernetes: true
 ```
