@@ -231,6 +231,8 @@ spec:
 
 ### Install Longhorn for peristent storage
 
+_Check for latest version, this version is latest of this edit_
+
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
 ```
