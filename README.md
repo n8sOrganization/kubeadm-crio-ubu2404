@@ -228,11 +228,11 @@ apt-cache policy kubeadm | grep <version, e.g. 1.26>
 **Step 2. Set environment vars**
 
 ```bash
-K8S_RELEASE="<Release version, e.g. e.g. v1.26.2>"
+K8S_RELEASE="<Release version, e.g. v1.26.2>"
 ```
 
 ```bash
-KUBEADM_VER="<kubeadm version. e.g. e.g. 1.26.2-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.26.2-00>"
 ```
 
 ```bash
@@ -274,11 +274,11 @@ kubectl uncordon $NODE_NAME
 **Step 1. Set environment vars**
 
 ```bash
-K8S_RELEASE="<Release version, e.g. e.g. v1.26.2>"
+K8S_RELEASE="<Release version, e.g. v1.26.2>"
 ```
 
 ```bash
-KUBEADM_VER="<kubeadm version. e.g. e.g. 1.26.2-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.26.2-00>"
 ```
 
 ```bash
@@ -319,7 +319,7 @@ kubectl uncordon $NODE_NAME
 **Step 1. Set environment vars**
 
 ```bash
-KUBEADM_VER="<kubeadm version. e.g. e.g. 1.26.2-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.26.2-00>"
 ```
 
 **Step 2. Update bins**
