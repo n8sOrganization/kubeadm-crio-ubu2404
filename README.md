@@ -213,6 +213,8 @@ sudo kubeadm token create --print-join-command
 
 ## Upgrade Cluster Version
 
+_Note: Backup your etcd before performing an upgrade. Alternatively, use Velero to backup your entire cluster_
+
 ### First control plane node (From first control plane node console)
 
 **Step 1. Retrieve K8s release version and bin version, and set env vars (Ubuntu)**
