@@ -192,6 +192,14 @@ spec: {}
 EOF
 ```
 
+## Install Longhorn for peristent storage
+
+_Check for latest version, this version is latest of this edit_
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
+```
+
 ## Join a Worker Node
 
 To complete your cluster, repeat the disable swap, enable ip forward, add br_netfilter module, and the installation steps for Kubeadm on a fresh Linux host. Then submit the `join` command on that host.
@@ -200,39 +208,122 @@ To complete your cluster, repeat the disable swap, enable ip forward, add br_net
 ```bash
 sudo kubeadm token create --print-join-command
 ```
+
 **2. On a fresh node with Kubeadm installed, appy the `join` command from step 1.**
 
-## Misc. Info
+## Upgrade Cluster Version
 
-### BGP not working / calico-node pods not starting
+### First control plane node:
 
-If you switch between IPIP mode and VXLAN mode, and/or if you disable and re-enable BGP, you might experience a symptom of the calico-node pods not being able to re-peer with the other nodes for BGP route sharing. The default config for calico-node to determine which interface to select on a host for underlay traffic is first-detected. This typically works on a freshly istalled host. But on one that has many interfaces defined (e.g. one that has been running a CNI plugin with all sorts of veth interfaces), it can become problematic.
+**Step 1. Retrieve K8s release version and bin version, and set env vars (Ubuntu)**
 
-To fix this, you can configure the service to use a different selection method. All methods are (https://docs.tigera.io/calico/3.25/reference/configure-calico-node#ip-autodetection-methods)[documented here]. 
+Check https://github.com/kubernetes/kubernetes/releases for available releases
 
-To fix the issue, you can try to apply this change:
-
-```bash
-kubectl set env daemonset/calico-node -n calico-system IP_AUTODETECTION_METHOD=kubernetes-internal-ip]
-```
-
-To make it permanent (when using the Calico operator), update your `installation` resource as foolows:
-
-```yaml
-kind: Installation
-metadata:
-  name: default
-spec:
-  calicoNetwork:
-  ...
-    nodeAddressAutodetectionV4:
-      kubernetes: NodeInternalIP
-```
-
-### Install Longhorn for peristent storage
-
-_Check for latest version, this version is latest of this edit_
+For bins:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
+apt-cache policy kubeadm | grep <version, e.g. 1.26>
+```
+
+**Step 2. Set environment vars**
+
+```bash
+K8S_RELEASE="<Release version, e.g. e.g. v1.26.2>"
+```
+
+```bash
+KUBEADM_VER="<kubeadm version. e.g. e.g. 1.26.2-00>"
+```
+
+```bash
+NODE_NAME="<Node name>"
+```
+
+**Step 3. Perform upgrade plan**
+
+```bash
+sudo kubeadm upgrade plan $K8S_RELEASE
+```
+
+**Step 4. Update bins**
+
+```bash
+sudo apt-get update && sudo apt-get -y –allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
+```
+
+**Step 5. Perform Cordon, drain, upgrade, and uncordon**
+
+```bash
+kubectl cordon $NODE_NAME
+```
+
+```bash
+kubectl drain $NODE_NAME --ignore-daemonsets
+```
+
+```bash
+sudo kubeadm upgrade apply $K8S_RELEASE
+```
+
+```bash
+kubectl uncordon $NODE_NAME
+```
+
+### Subsequent control plane nodes
+
+**Step 1. Set environment vars**
+
+```bash
+K8S_RELEASE="<Release version, e.g. e.g. v1.26.2>"
+```
+
+```bash
+KUBEADM_VER="<kubeadm version. e.g. e.g. 1.26.2-00>"
+```
+
+```bash
+NODE_NAME="<Node name>"
+```
+
+**Step 2. Perform upgrade plan**
+
+```bash
+sudo kubeadm upgrade plan $K8S_RELEASE
+```
+**Step 3. Update bins**
+
+```bash
+sudo apt-get update && sudo apt-get -y –allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
+```
+
+**Step 4. Perform Cordon, drain, upgrade, and uncordon**
+
+```bash
+kubectl cordon $NODE_NAME
+```
+
+```bash
+kubectl drain $NODE_NAME --ignore-daemonsets
+```
+
+```bash
+sudo kubeadm upgrade node $K8S_RELEASE
+```
+
+```bash
+kubectl uncordon $NODE_NAME
+```
+
+### Worker nodes
+
+**Step 1. Set environment vars**
+
+```bash
+KUBEADM_VER="<kubeadm version. e.g. e.g. 1.26.2-00>"
+```
+
+**Step 2. Update bins**
+
+```bash
+sudo apt-get update && sudo apt-get -y –allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
 ```
