@@ -57,7 +57,7 @@ br_netfilter
 EOF
 ```
 
-## Install CRI-O on Ubuntu 22.04
+## Install CRI-O on Ubuntu
 
 **1. Set variables for subsequent commands. OS and VERSION are specific to CRI-O URLs**
 ```bash
