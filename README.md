@@ -200,7 +200,7 @@ _Check for latest version, this version is latest of this edit_
 kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
 ```
 
-## Instal MetalLB and Contour
+## Install MetalLB and Contour
 
 
 ```bash
