@@ -213,7 +213,7 @@ sudo kubeadm token create --print-join-command
 
 ## Upgrade Cluster Version
 
-### First control plane node:
+### First control plane node (From first control plane node console)
 
 **Step 1. Retrieve K8s release version and bin version, and set env vars (Ubuntu)**
 
@@ -269,7 +269,7 @@ sudo kubeadm upgrade apply $K8S_RELEASE
 kubectl uncordon $NODE_NAME
 ```
 
-### Subsequent control plane nodes
+### Subsequent control plane nodes (From each control plane node console)
 
 **Step 1. Set environment vars**
 
@@ -314,7 +314,7 @@ sudo kubeadm upgrade node $K8S_RELEASE
 kubectl uncordon $NODE_NAME
 ```
 
-### Worker nodes
+### Worker nodes (From each worker node console)
 
 **Step 1. Set environment vars**
 
