@@ -1,6 +1,6 @@
-# Installing CRI-O and Kubeadm v1.26.1 on Ubuntu Server v22.04
+# Installing CRI-O, Kubernetes with Kubeadm, MetalLB, Contour, Calico, and Longhorn on Ubuntu Server (Plus Kubeadm cluster upgrade steps)
 
-This doc will get you up and running with a K8s cluster on Ubuntu 22.04 `minimal` server install, complete with Calcio cluster networking and Longohrn persistent storage. I've modified the tolerations for Calico controller pods so that you can run a fully functional K8s platform with just a single control plane node (It's commented in the manifest for calico. This is obviously not something you'd do outside of a lab)
+This doc will get you up and running with a K8s cluster on Ubuntu 22.04 `minimal` server install, complete with Calcio cluster networking and Longhorn persistent storage. I've modified the tolerations for Calico controller pods so that you can run a fully functional K8s platform with just a single control plane node (It's commented in the manifest for calico. This is obviously not something you'd do outside of a lab)
 
 With a single node, you will end up with something like this:
 ![image](https://user-images.githubusercontent.com/45366367/216838964-10ad77e5-fc9e-4bd8-8e77-4ffc93c8958c.png)
@@ -198,6 +198,37 @@ _Check for latest version, this version is latest of this edit_
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
+```
+
+## Instal MetalLB and Contour
+
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+```
+
+Config:
+```yaml
+cat <<EOF | kubectl create -f -
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: first-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.253.1-192.253.1.254
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: l2-mode
+  namespace: metallb-system
+EOF
+```
+
+```bash
+kubectl apply -f https://projectcontour.io/quickstart/contour.yaml
 ```
 
 ## Join a Worker Node
