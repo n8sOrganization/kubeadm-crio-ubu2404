@@ -2,6 +2,8 @@
 
 This doc will get you up and running with a K8s cluster on Ubuntu `minimal` server install, complete with Calcio cluster networking, Longhorn persistent storage, MetalLB load balancer, and Contour ingress controller. I've modified the tolerations for Calico controller pods so that you can run a fully functional K8s platform with just a single control plane node (It's commented in the manifest for calico. This is obviously not something you'd do outside of a lab)
 
+This setup is for a simple, single control plane node result. While it is possible to change a kubeadm deployed single cp node to HA multi-cp node cluster, it is not supported by kubeadm and is not very intuitive. For a multi control plane node cluster, read the docs on HA deployment.
+
 With a single node, you will end up with something like this:
 ![image](https://user-images.githubusercontent.com/45366367/216838964-10ad77e5-fc9e-4bd8-8e77-4ffc93c8958c.png)
 
