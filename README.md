@@ -244,7 +244,7 @@ sudo kubeadm token create --print-join-command
 
 **2. On a fresh node with Kubeadm installed, appy the `join` command from step 1.**
 
-## Upgrade Cluster Version
+# Upgrade Cluster Version
 
 _Note: Backup your etcd before performing an upgrade. Alternatively, use Velero to backup your entire cluster_
 
