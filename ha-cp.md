@@ -33,7 +33,7 @@ export KUBE_VIP_RELEASE=<(e.g. v0.5.11)>
 export HOST_INTERFACE=<your host interface (e.g. ens34)>
 ```
 
-2. Place `kube-vip.yaml` manifest (Change the commented necessary lines for your environment)
+2. Create `kube-vip.yaml` manifest and place in /etc/kubernetes/manifests/
 
 ```bash
 cat <<EOF | sudo tee -a /etc/kubernetes/manifests/kube-vip.yaml
