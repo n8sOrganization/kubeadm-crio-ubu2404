@@ -105,5 +105,11 @@ sudo kubeadm init --pod-network-cidr=10.50.0.0/16 --service-cidr=10.100.0.0/16  
 
 4. Repeat steps one and two on subsequent control plane nodes and then use the control plane node `join` command resulting from step 3.
 
+If it has been moore than two hours since your first control plane node was created, issue the following command on it before adding your new node:
+
+```bash
+kubeadm init phase upload-certs
+```
+
 [Return to full guide](https://github.com/n8sOrganization/kubeadm-crio-ubu2404/blob/main/README.md#init-control-plane)
  
