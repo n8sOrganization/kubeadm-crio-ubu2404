@@ -1,8 +1,8 @@
 # Installing CRI-O, Kubernetes with Kubeadm, MetalLB, Contour, Calico, and Longhorn on Ubuntu Server (Plus Kubeadm cluster upgrade steps)
 
-This doc will get you up and running with a K8s cluster on Ubuntu `minimal` server install, complete with Calcio cluster networking, Longhorn persistent storage, MetalLB load balancer, and Contour ingress controller. I've modified the tolerations for Calico controller pods so that you can run a fully functional K8s platform with just a single control plane node (It's commented in the manifest for calico. This is obviously not something you'd do outside of a lab)
+This doc will get you up and running with a K8s cluster on Ubuntu `minimal` server install, complete with Calcio cluster networking, Longhorn persistent storage, MetalLB load balancer, and Contour ingress controller. I've modified the tolerations for Calico controller pods so that you can run a fully functional K8s platform with just a single control plane node (It's commented in the manifest for calico. 
 
-This setup is for a simple, single control plane node result. While it is possible to change a kubeadm deployed single cp node to HA multi-cp node cluster, it is not supported by kubeadm and is not very intuitive. For a multi control plane node cluster, read the docs on HA deployment and/or see this [quick start guide](https://github.com/n8sOrganization/kubeadm-crio-ubu2404/blob/main/ha-cp.md) to replace the `kubeadm init` section of this doc.
+This setup is for a simple, single control plane node result. While it is possible to change a kubeadm deployed single cp node to HA multi-cp node cluster, it is not supported by kubeadm and is not very intuitive. For a multi control plane node cluster, read the docs on HA deployment and/or see the HA optional link in the `kubeadm init` section. 
 
 With a single node, you will end up with something like this:
 ![image](https://user-images.githubusercontent.com/45366367/216838964-10ad77e5-fc9e-4bd8-8e77-4ffc93c8958c.png)
@@ -138,6 +138,8 @@ sudo kubeadm config images pull
 ```
 
 ## Init Control Plane
+
+This will create a single node control plane. To create a multi-node control plane, replace step one below with these optional directions: [HA cp quick start guide](https://github.com/n8sOrganization/kubeadm-crio-ubu2404/blob/main/ha-cp.md).
 
 **1. Change CIDRs to whatever makes sense for your environment. Will be using IPIP overlay, so as long as they don't overlap with each other or other advertised CIDRs, you are good**
 ```bash
