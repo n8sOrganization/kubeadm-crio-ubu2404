@@ -153,15 +153,6 @@ sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown -R $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-## Join a Worker Node
-
-To complete your cluster, repeat the disable swap, enable ip forward, add br_netfilter module, and the installation steps for Kubeadm on a fresh Linux host. Then submit the `join` command on that host.
-
-**1. From the control plane node**
-```bash
-sudo kubeadm token create --print-join-command
-```
-
 **2. On a fresh node with Kubeadm installed, appy the `join` command from step 1.**
 
 ## Install Calico CNI plugin with basic IPIP overlay
@@ -178,6 +169,7 @@ apiVersion: operator.tigera.io/v1
 kind: Installation
 metadata:
   name: default
+  namespace: tigera-operator
 spec:
   # Configures Calico networking.
   calicoNetwork:
