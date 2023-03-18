@@ -207,6 +207,17 @@ spec: {}
 EOF
 ```
 
+## Join a Worker Node
+
+To complete your cluster, repeat the disable swap, enable ip forward, add br_netfilter module, and the installation steps for Kubeadm on a fresh Linux host. Then submit the `join` command on that host.
+
+**1. From the control plane node**
+```bash
+sudo kubeadm token create --print-join-command
+```
+
+**2. On a fresh node with Kubeadm installed, appy the `join` command from step 1.**
+
 ## Install Longhorn for peristent storage
 
 _Check for latest version, this version is latest of this edit_
