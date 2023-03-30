@@ -220,6 +220,8 @@ kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/depl
 
 ## Install MetalLB and Contour
 
+_Note: You can use kube-vip instead of MetalLB as a Cloud Provider to manage service exposure. [See directions here](https://kube-vip.io/docs/usage/cloud-provider/)._
+
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
