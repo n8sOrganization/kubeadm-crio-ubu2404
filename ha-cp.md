@@ -2,7 +2,7 @@
 
 This is a single part of the process. For full process, see https://github.com/n8sOrganization/kubeadm-crio-ubu2404/blob/main/README.md
 
-For a multi-node (HA) control plane, we need to perform some additional work. Kubeadm signs the control plane certs with a load balancer IP addr that will frontend all cp nodes. So we need to setup an LB and then provide that address to `kubeadm init` with the `--control-plane-endpoint` option.
+For a multi-node (HA) control plane, we need to perform some additional work. Kubeadm configures the kube config with a load balancer IP addr that will frontend all cp nodes. So we need to setup an LB and then provide that address to `kubeadm init` with the `--control-plane-endpoint` option.
 
 There are many ways to setup an LB, but a simple no-fuss way is to usee `kube-vip`. Kube-vip will run as a static pod on our control plane nodes and assigns a common virtual IP to their interfaces. It also serves as a load balancer for them. See the [docs for complete detail](https://github.com/kube-vip/kube-vip).
 
