@@ -53,9 +53,9 @@ spec:
     - name: port
       value: "6443"
     - name: vip_interface
-      value: ${HOST_INTERFACE}
+      value: "${HOST_INTERFACE}"
     - name: vip_cidr
-      value: ${KUBE_VIP_CIDR}
+      value: "${KUBE_VIP_CIDR}"
     - name: cp_enable
       value: "true"
     - name: cp_namespace
@@ -71,7 +71,7 @@ spec:
     - name: vip_retryperiod
       value: "1"
     - name: vip_address
-      value: ${KUBE_VIP_ADDR}
+      value: "${KUBE_VIP_ADDR}"
     image: ghcr.io/kube-vip/kube-vip:${KUBE_VIP_RELEASE}
     imagePullPolicy: Always
     name: kube-vip
