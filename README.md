@@ -162,7 +162,7 @@ sudo chown -R $(id -u):$(id -g) $HOME/.kube/config
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
 ```
 
-**2. Apply basic Calico IPIP config (Change the "192.168.130.0/16" to natch your node IP CIDR, this addresses an issue when using HA Proxy for HA control plane) This is an irritating piece of Calcio config. I use 192.168.130.x/16 addrs for my CP nodes. **
+**2. Apply basic Calico IPIP config **
 ```yaml
 cat <<EOF | kubectl apply -f -
 apiVersion: operator.tigera.io/v1
@@ -183,9 +183,7 @@ spec:
     ## The following block is to avoid an issue with interface auto-detection.
     ## If it causes issues for your installation, remove it.
     nodeAddressAutodetectionV4:
-      #kubernetes: NodeInternalIP
-      cidrs:
-        - "192.168.130.0/16"
+      kubernetes: NodeInternalIP
   ## The following block is only added so pods will tolerate 
   ## controlplane nodes. Not normal. If you plan to add
   ## a worker node, it can be removed.
