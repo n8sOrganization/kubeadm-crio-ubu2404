@@ -185,7 +185,7 @@ spec:
     nodeAddressAutodetectionV4:
       #kubernetes: NodeInternalIP
       cidrs:
-        - "192.168.130.0/16"
+        - "192.168.130.0/24"
   ## The following block is only added so pods will tolerate 
   ## controlplane nodes. Not normal. If you plan to add
   ## a worker node, it can be removed.
