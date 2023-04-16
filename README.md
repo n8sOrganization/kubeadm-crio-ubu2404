@@ -164,7 +164,7 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0
 
 **2. Apply basic Calico IPIP config (Change the "192.168.130.0/16" to natch your node IP CIDR, this addresses an issue when using HA Proxy for HA control plane) This is an irritating piece of Calcio config. I use 192.168.130.x/16 addrs for my CP nodes. So I say only addrs on 192.168.130.x by saying 192.168.130.0/24 **
 ```yaml
-cat <<EOF | kubectl create -f -
+cat <<EOF | kubectl apply -f -
 apiVersion: operator.tigera.io/v1
 kind: Installation
 metadata:
@@ -231,7 +231,7 @@ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/confi
 
 Config:
 ```yaml
-cat <<EOF | kubectl create -f -
+cat <<EOF | kubectl apply -f -
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
