@@ -224,7 +224,7 @@ _Note: You can use kube-vip instead of MetalLB as a Cloud Provider to manage ser
 
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
 ```
 
 Config:
