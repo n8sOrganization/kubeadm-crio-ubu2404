@@ -153,8 +153,6 @@ sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown -R $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-**2. On a fresh node with Kubeadm installed, appy the `join` command from step 1.**
-
 ## Install Calico CNI plugin with basic IPIP overlay
 
 **1. Install Calcio operator**
@@ -162,7 +160,7 @@ sudo chown -R $(id -u):$(id -g) $HOME/.kube/config
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
 ```
 
-**2. Apply basic Calico IPIP config **
+**2. Apply basic Calico IPIP config
 ```yaml
 cat <<EOF | kubectl apply -f -
 apiVersion: operator.tigera.io/v1
