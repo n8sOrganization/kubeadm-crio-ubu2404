@@ -64,7 +64,7 @@ EOF
 **1. Set variables for subsequent commands. OS and VERSION are specific to CRI-O URLs**
 ```bash
 export OS=xUbuntu_22.04
-export VERSION=1.26
+export VERSION=1.28
 ```
 
 **2. Configure apt certs and repos**
@@ -121,10 +121,10 @@ sudo apt-get install -y apt-transport-https ca-certificates curl
 
 **3. Configure apt-get cert and repo**
 ```bash
-sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v$VERSION/deb/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/kubernetes-apt-keyring.gpg
 ```
 ```bash
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v$VERSION/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 ```
 
 **4. Update apt and install `kubelet`, `kubeadm`, and `kubectl`**
@@ -157,7 +157,7 @@ sudo chown -R $(id -u):$(id -g) $HOME/.kube/config
 
 **1. Install Calcio operator**
 ```bash
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
 ```
 
 **2. Apply basic Calico IPIP config
@@ -213,7 +213,7 @@ sudo kubeadm token create --print-join-command
 _Check for latest version, this version is latest of this edit_
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
+kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.5.3/deploy/longhorn.yaml
 ```
 
 ## Install MetalLB and Contour
@@ -222,7 +222,7 @@ _Note: You can use kube-vip instead of MetalLB as a Cloud Provider to manage ser
 
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
 ```
 
 Config:
@@ -288,7 +288,7 @@ sudo kubeadm upgrade plan $K8S_RELEASE
 **Step 4. Update bins**
 
 ```bash
-sudo apt-get update && sudo apt-get -y –allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
+sudo apt-get update && sudo apt-get -y --allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
 ```
 
 **Step 5. Perform Cordon, drain, upgrade, and uncordon**
@@ -333,7 +333,7 @@ sudo kubeadm upgrade plan $K8S_RELEASE
 **Step 3. Update bins**
 
 ```bash
-sudo apt-get update && sudo apt-get -y –allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
+sudo apt-get update && sudo apt-get -y --allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
 ```
 
 **Step 4. Perform Cordon, drain, upgrade, and uncordon**
@@ -365,5 +365,5 @@ KUBEADM_VER="<kubeadm version, e.g. 1.26.2-00>"
 **Step 2. Update bins**
 
 ```bash
-sudo apt-get update && sudo apt-get -y –allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
+sudo apt-get update && sudo apt-get -y --allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
 ```
