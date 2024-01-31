@@ -220,7 +220,7 @@ kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/depl
 
 _Note: You can use kube-vip instead of MetalLB as a Cloud Provider to manage service exposure. [See directions here](https://kube-vip.io/docs/usage/cloud-provider/)._
 
-_Check for latest version [here](kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.5.3/deploy/longhorn.yaml)_
+_Check for latest version [here](https://github.com/metallb/metallb)_
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
