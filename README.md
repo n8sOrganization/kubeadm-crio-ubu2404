@@ -206,11 +206,11 @@ To complete your cluster, repeat the disable swap, enable ip forward, add br_net
 sudo kubeadm token create --print-join-command
 ```
 
-**2. On a fresh node with Kubeadm installed, appy the `join` command from step 1.**
+**2. On a fresh node with Kubeadm installed, apply the `join` command from step 1 (prepend with `sudo`).**
 
 ## Install Longhorn for peristent storage
 
-_Check for latest version, this version is latest of this edit_
+_Check for latest version [here](https://github.com/longhorn/longhorn)_
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
