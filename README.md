@@ -288,7 +288,7 @@ sudo kubeadm upgrade plan $K8S_RELEASE
 **Step 4. Update bins**
 
 ```bash
-sudo apt-get update && sudo apt-get -y –allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
+sudo apt-get update && sudo apt-get -y -–allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
 ```
 
 **Step 5. Perform Cordon, drain, upgrade, and uncordon**
