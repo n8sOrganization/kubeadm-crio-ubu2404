@@ -97,6 +97,7 @@ sudo systemctl enable --now crio
 
 **5. Check status of service for `running`**
 ```bash
+sudo apt install cri-tools
 sudo systemctl status crio
 sudo crio-status info
 sudo crictl info
