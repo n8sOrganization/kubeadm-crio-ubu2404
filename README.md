@@ -63,8 +63,8 @@ EOF
 
 **1. Set variables for subsequent commands**
 ```bash
-export KUBERNETES_VERSION=1.31
-export CRIO_VERSION=1.30
+export KUBERNETES_VERSION=1.33
+export CRIO_VERSION=1.33
 ```
 
 **2. Configure apt certs and repos**
@@ -161,7 +161,7 @@ sudo chown -R $(id -u):$(id -g) $HOME/.kube/config
 
 **1. Install Calcio operator**
 ```bash
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/refs/heads/release-v3.30/manifests/tigera-operator.yaml
 ```
 
 **2. Apply basic Calico IPIP config
@@ -227,7 +227,7 @@ _Note: You can use kube-vip instead of MetalLB as a Cloud Provider to manage ser
 _Check for latest version [here](https://github.com/metallb/metallb)_
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
 ```
 
 Config:
@@ -273,11 +273,11 @@ apt-cache policy kubeadm
 **Step 2. Set environment vars**
 
 ```bash
-K8S_RELEASE="<Release version, e.g. v1.31.0>"
+K8S_RELEASE="<Release version, e.g. v1.33.0>"
 ```
 
 ```bash
-KUBEADM_VER="<kubeadm version, e.g. 1.31.0-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.33.0-00>"
 ```
 
 ```bash
@@ -319,11 +319,11 @@ kubectl uncordon $NODE_NAME
 **Step 1. Set environment vars**
 
 ```bash
-K8S_RELEASE="<Release version, e.g. v1.31.0>"
+K8S_RELEASE="<Release version, e.g. v1.33.0>"
 ```
 
 ```bash
-KUBEADM_VER="<kubeadm version, e.g. 1.31.0-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.33.0-00>"
 ```
 
 ```bash
@@ -364,7 +364,7 @@ kubectl uncordon $NODE_NAME
 **Step 1. Set environment vars**
 
 ```bash
-KUBEADM_VER="<kubeadm version, e.g. 1.31.0-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.33.0-00>"
 ```
 
 **Step 2. Update bins**
@@ -372,3 +372,4 @@ KUBEADM_VER="<kubeadm version, e.g. 1.31.0-00>"
 ```bash
 sudo apt-get update && sudo apt-get -y --allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
 ```
+
