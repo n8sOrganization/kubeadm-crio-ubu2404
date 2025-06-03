@@ -72,14 +72,14 @@ export CRIO_VERSION=1.30
 cat <<EOF | sudo tee /etc/apt/sources.list.d/cri-o.sources
 Enabled: yes
 Types: deb
-URIs: https://pkgs.k8s.io/addons:/cri-o:/stable:/v$CRIO_VERSION/deb/
+URIs: https://download.opensuse.org/repositories/isv:/cri-o:/stable:/$CRIO_VERSION/deb/
 Suites: /
 Signed-By: /usr/share/keyrings/cri-o-apt-keyring.gpg
 EOF
 ```
 
 ```bash
-curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/stable:/v$CRIO_VERSION/deb/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/cri-o-apt-keyring.gpg
+curl -fsSL https://download.opensuse.org/repositories/isv:/cri-o:/stable:/$CRIO_VERSION/deb/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/cri-o-apt-keyring.gpg
 ```
 
 **3. Update apt and install CRI-O**
