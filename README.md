@@ -61,32 +61,30 @@ EOF
 
 ## Install CRI-O on Ubuntu
 
-**1. Set variables for subsequent commands. OS and VERSION are specific to CRI-O URLs**
+**1. Set variables for subsequent commands**
 ```bash
-export OS=xUbuntu_22.04
-export VERSION=1.28
+export KUBERNETES_VERSION=1.31
+export CRIO_VERSION=1.30
 ```
 
 **2. Configure apt certs and repos**
 ```bash
-echo "deb [signed-by=/usr/share/keyrings/libcontainers-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+cat <<EOF | sudo tee /etc/apt/sources.list.d/cri-o.sources
+Enabled: yes
+Types: deb
+URIs: https://pkgs.k8s.io/addons:/cri-o:/stable:/v$CRIO_VERSION/deb/
+Suites: /
+Signed-By: /usr/share/keyrings/cri-o-apt-keyring.gpg
+EOF
 ```
 
 ```bash
-echo "deb [signed-by=/usr/share/keyrings/libcontainers-crio-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
+curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/stable:/v$CRIO_VERSION/deb/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/cri-o-apt-keyring.gpg
 ```
 
+**3. Update apt and install CRI-O**
 ```bash
-curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
-```
-
-```bash
-curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
-```
-
-**3. Update apt and install CRI-O and CRI-O specific runC**
-```bash
-sudo apt update && sudo apt -y install cri-o cri-o-runc
+sudo apt update && sudo apt -y install cri-o
 ```
 
 **4. Enable and start CRI-O service**
@@ -97,8 +95,8 @@ sudo systemctl enable --now crio
 
 **5. Check status of service for `running`**
 ```bash
+sudo apt install cri-tools
 sudo systemctl status crio
-sudo crio-status info
 sudo crictl info
 ```
 
@@ -121,10 +119,16 @@ sudo apt-get install -y apt-transport-https ca-certificates curl
 
 **3. Configure apt-get cert and repo**
 ```bash
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v$VERSION/deb/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/kubernetes-apt-keyring.gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION/deb/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/kubernetes-key.gpg
 ```
 ```bash
-echo "deb [signed-by=/usr/share/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v$VERSION/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.sources
+Enabled: yes
+Types: deb
+URIs: https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION/deb/
+Suites: /
+Signed-By: /usr/share/keyrings/kubernetes-key.gpg
+EOF
 ```
 
 **4. Update apt and install `kubelet`, `kubeadm`, and `kubectl`**
@@ -157,7 +161,7 @@ sudo chown -R $(id -u):$(id -g) $HOME/.kube/config
 
 **1. Install Calcio operator**
 ```bash
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/tigera-operator.yaml
 ```
 
 **2. Apply basic Calico IPIP config
@@ -206,23 +210,24 @@ To complete your cluster, repeat the disable swap, enable ip forward, add br_net
 sudo kubeadm token create --print-join-command
 ```
 
-**2. On a fresh node with Kubeadm installed, appy the `join` command from step 1.**
+**2. On a fresh node with Kubeadm installed, apply the `join` command from step 1 (prepend with `sudo`).**
 
 ## Install Longhorn for peristent storage
 
-_Check for latest version, this version is latest of this edit_
+_Check for latest version [here](https://github.com/longhorn/longhorn)_
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.5.3/deploy/longhorn.yaml
+kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.6.2/deploy/longhorn.yaml
 ```
 
 ## Install MetalLB and Contour
 
 _Note: You can use kube-vip instead of MetalLB as a Cloud Provider to manage service exposure. [See directions here](https://kube-vip.io/docs/usage/cloud-provider/)._
 
+_Check for latest version [here](https://github.com/metallb/metallb)_
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
 ```
 
 Config:
@@ -262,17 +267,17 @@ Check https://github.com/kubernetes/kubernetes/releases for available releases
 For bins:
 
 ```bash
-apt-cache policy kubeadm | grep <version, e.g. 1.26>
+apt-cache policy kubeadm
 ```
 
 **Step 2. Set environment vars**
 
 ```bash
-K8S_RELEASE="<Release version, e.g. v1.26.2>"
+K8S_RELEASE="<Release version, e.g. v1.31.0>"
 ```
 
 ```bash
-KUBEADM_VER="<kubeadm version, e.g. 1.26.2-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.31.0-00>"
 ```
 
 ```bash
@@ -288,7 +293,7 @@ sudo kubeadm upgrade plan $K8S_RELEASE
 **Step 4. Update bins**
 
 ```bash
-sudo apt-get update && sudo apt-get -y --allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
+sudo apt-get update && sudo apt-get -y -–allow-change-held-packages install kubelet=$KUBEADM_VER kubeadm=$KUBEADM_VER kubectl=$KUBEADM_VER
 ```
 
 **Step 5. Perform Cordon, drain, upgrade, and uncordon**
@@ -314,11 +319,11 @@ kubectl uncordon $NODE_NAME
 **Step 1. Set environment vars**
 
 ```bash
-K8S_RELEASE="<Release version, e.g. v1.26.2>"
+K8S_RELEASE="<Release version, e.g. v1.31.0>"
 ```
 
 ```bash
-KUBEADM_VER="<kubeadm version, e.g. 1.26.2-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.31.0-00>"
 ```
 
 ```bash
@@ -359,7 +364,7 @@ kubectl uncordon $NODE_NAME
 **Step 1. Set environment vars**
 
 ```bash
-KUBEADM_VER="<kubeadm version, e.g. 1.26.2-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.31.0-00>"
 ```
 
 **Step 2. Update bins**
