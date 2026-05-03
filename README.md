@@ -63,8 +63,8 @@ EOF
 
 **1. Set variables for subsequent commands**
 ```bash
-export KUBERNETES_VERSION=1.33
-export CRIO_VERSION=1.33
+export KUBERNETES_VERSION=1.35
+export CRIO_VERSION=1.35
 ```
 
 **2. Configure apt certs and repos**
@@ -273,11 +273,11 @@ apt-cache policy kubeadm
 **Step 2. Set environment vars**
 
 ```bash
-K8S_RELEASE="<Release version, e.g. v1.33.0>"
+K8S_RELEASE="<Release version, e.g. v1.35.4>"
 ```
 
 ```bash
-KUBEADM_VER="<kubeadm version, e.g. 1.33.0-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.35.4-1.1>"
 ```
 
 ```bash
