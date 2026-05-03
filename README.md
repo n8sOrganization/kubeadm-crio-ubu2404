@@ -319,11 +319,11 @@ kubectl uncordon $NODE_NAME
 **Step 1. Set environment vars**
 
 ```bash
-K8S_RELEASE="<Release version, e.g. v1.33.0>"
+K8S_RELEASE="<Release version, e.g. v1.35.4>"
 ```
 
 ```bash
-KUBEADM_VER="<kubeadm version, e.g. 1.33.0-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.35.4-1.1>"
 ```
 
 ```bash
@@ -364,7 +364,7 @@ kubectl uncordon $NODE_NAME
 **Step 1. Set environment vars**
 
 ```bash
-KUBEADM_VER="<kubeadm version, e.g. 1.33.0-00>"
+KUBEADM_VER="<kubeadm version, e.g. 1.35.4-1.1>"
 ```
 
 **Step 2. Update bins**
