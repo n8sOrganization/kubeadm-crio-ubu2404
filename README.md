@@ -1,47 +1,44 @@
 # Installing CRI-O, Kubernetes with Kubeadm, MetalLB, Contour, Calico, and Longhorn on Ubuntu Server (Plus Kubeadm cluster upgrade steps)
 
-This doc will get you up and running with a K8s cluster on Ubuntu `minimal` server install, complete with Calcio cluster networking, Longhorn persistent storage, MetalLB load balancer, and Contour ingress controller. I've modified the tolerations for Calico controller pods so that you can run a fully functional K8s platform with just a single control plane node (It's commented in the manifest for calico. 
+## Update for 2026
+I recently went through this with a colleague and found that the once difficult to install on Ubunutu CRI-O, is now the next to impossible to install. At least that was my experience with little patience for trouble shooting. So I've updated this recipe to use containerd.
+
+Long story short, install containerd for Ubuntu and then use Cilium CNI plugin. Cilium provides all of the functionality of Calico, MetalLB, Envoy, plus more.
+
+Fronm here down, the Ubuntu config is still relevant (e.g. Swap file, ip forwarding, etc.). Replace anything related to cri-o with containerd and Calico with Cilium. Not much point in writing more about this given an AI chatbot can fill in the rest.
 
 This setup is for a simple, single control plane node result. While it is possible to change a kubeadm deployed single cp node to HA multi-cp node cluster, it is not supported by kubeadm and is not very intuitive. For a multi control plane node cluster, read the docs on HA deployment and/or see the HA optional link in the `kubeadm init` section. 
 
-With a single node, you will end up with something like this:
-![image](https://user-images.githubusercontent.com/45366367/216838964-10ad77e5-fc9e-4bd8-8e77-4ffc93c8958c.png)
-
-## Configure Ubuntu for Kubeadm and CRI-O (These steps are generally required for any CRI runtime and/or K8s)
+## Configure Ubuntu for containerd and Kubeadm
 
 **1. Update base ubuntu install**
 ```bash
 sudo apt update && sudo apt -y upgrade
 ```
 
-**2. Install utilities required for subsequent steps**
-```bash
-sudo apt install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
-```
-
-**3. Disable swap**
+**2. Disable swap**
 ```bash
 sudo swapoff -a
 ```
 
-**4. Remark out the swap line in the fstab file and save change**
+**3. Remark out the swap line in the fstab file and save change**
 ```bash
 sudo vi  /etc/fstab 
 ```
 
-**5. Enable ip forwarding**
+**4. Enable ip forwarding**
 ```bash
 sudo sysctl -w net.ipv4.ip_forward=1
 ```
 
-**6. Add `net.ipv4.ip_forward = 1` to presistent config**
+**5. Add `net.ipv4.ip_forward = 1` to presistent config**
 ```bash
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 net.ipv4.ip_forward = 1
 EOF
 ```
 
-**7. Load br_netfilter and overlay module**
+**6. Load br_netfilter and overlay module**
 ```bash
 sudo modprobe br_netfilter
 ```
@@ -50,7 +47,7 @@ sudo modprobe br_netfilter
 sudo modprobe overlay
 ```
 
-**8. Add `br_netfilter` and `overlay` to persistent config**
+**7. Add `br_netfilter` and `overlay` to persistent config**
 
 ```bash
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -59,7 +56,7 @@ br_netfilter
 EOF
 ```
 
-## Install CRI-O on Ubuntu
+## Install containerd on Ubuntu
 
 **1. Set variables for subsequent commands. OS and VERSION are specific to CRI-O URLs**
 ```bash
