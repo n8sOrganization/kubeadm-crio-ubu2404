@@ -5,7 +5,7 @@ I recently went through this with a colleague and found that the once difficult 
 
 Long story short, install containerd for Ubuntu and then use Cilium CNI plugin. Cilium provides all of the functionality of Calico, MetalLB, Envoy, plus more.
 
-Fronm here down, the Ubuntu config is still relevant (e.g. Swap file, ip forwarding, etc.). Replace anything related to cri-o with containerd and Calico with Cilium. Not much point in writing more about this given an AI chatbot can fill in the rest.
+From here down, the Ubuntu config is still relevant (e.g. Swap file, ip forwarding, etc.). Replace anything related to cri-o with containerd and Calico with Cilium. Not much point in writing more about this given an AI chatbot can fill in the rest.
 
 This setup is for a simple, single control plane node result. While it is possible to change a kubeadm deployed single cp node to HA multi-cp node cluster, it is not supported by kubeadm and is not very intuitive. For a multi control plane node cluster, read the docs on HA deployment and/or see the HA optional link in the `kubeadm init` section. 
 
