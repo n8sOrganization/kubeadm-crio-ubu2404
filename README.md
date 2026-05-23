@@ -99,7 +99,7 @@ sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
 kubectl get nodes
 ```
 
-## Install the Cilium CLI
+## Install the Cilium CLI plugin
 
 ```bash
 CILIUM_CLI_VERSION="$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)"
