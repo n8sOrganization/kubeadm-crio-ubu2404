@@ -5,206 +5,170 @@ I recently went through this with a colleague and found that the once difficult 
 
 Long story short, install containerd for Ubuntu and then use Cilium CNI plugin. Cilium provides all of the functionality of Calico, MetalLB, Envoy, plus more.
 
-From here down, the Ubuntu config is still relevant (e.g. Swap file, ip forwarding, etc.). Replace anything related to cri-o with containerd and Calico with Cilium. Not much point in writing more about this given an AI chatbot can fill in the rest.
+## Prep node:
 
-This setup is for a simple, single control plane node result. While it is possible to change a kubeadm deployed single cp node to HA multi-cp node cluster, it is not supported by kubeadm and is not very intuitive. For a multi control plane node cluster, read the docs on HA deployment and/or see the HA optional link in the `kubeadm init` section. 
-
-## Configure Ubuntu for containerd and Kubeadm
-
-**1. Update base ubuntu install**
 ```bash
-sudo apt update && sudo apt -y upgrade
+sudo apt update
+sudo apt install -y apt-transport-https ca-certificates curl gpg
 ```
 
-**2. Disable swap**
+## Disable swap
+
 ```bash
 sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 ```
 
-**3. Remark out the swap line in the fstab file and save change**
-```bash
-sudo vi  /etc/fstab 
-```
-
-**4. Enable ip forwarding**
-```bash
-sudo sysctl -w net.ipv4.ip_forward=1
-```
-
-**5. Add `net.ipv4.ip_forward = 1` to presistent config**
-```bash
-cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
-net.ipv4.ip_forward = 1
-EOF
-```
-
-**6. Load br_netfilter and overlay module**
-```bash
-sudo modprobe br_netfilter
-```
-
-```bash
-sudo modprobe overlay
-```
-
-**7. Add `br_netfilter` and `overlay` to persistent config**
+## Load required kernel modules
 
 ```bash
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
 EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
 ```
 
-## Install containerd on Ubuntu
+## Set required sysctl params
 
-**1. Set variables for subsequent commands. OS and VERSION are specific to CRI-O URLs**
 ```bash
-export OS=xUbuntu_22.04
-export VERSION=1.26
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+sudo sysctl --system
 ```
 
-**2. Configure apt certs and repos**
-```bash
-echo "deb [signed-by=/usr/share/keyrings/libcontainers-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-```
+## Install and configure containerd
 
 ```bash
-echo "deb [signed-by=/usr/share/keyrings/libcontainers-crio-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
+sudo apt update
+sudo apt install -y containerd
+
+sudo mkdir -p /etc/containerd
+containerd config default | sudo tee /etc/containerd/config.toml >/dev/null
+
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+
+sudo systemctl restart containerd
+sudo systemctl enable containerd
 ```
 
-```bash
-curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
-```
+## Install kubeadm, kubelet, kubectl
 
 ```bash
-curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
-```
+#Pick the right version to match kubeadm version
 
-**3. Update apt and install CRI-O and CRI-O specific runC**
-```bash
-sudo apt update && sudo apt -y install cri-o cri-o-runc
-```
+KUBERNETES_VERSION=v1.36
 
-**4. Enable and start CRI-O service**
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now crio
-```
+sudo mkdir -p /etc/apt/keyrings
 
-**5. Check status of service for `running`**
-```bash
-sudo apt install cri-tools
-sudo systemctl status crio
-sudo crio-status info
-sudo crictl info
-```
+curl -fsSL "https://pkgs.k8s.io/core:/stable:/${KUBERNETES_VERSION}/deb/Release.key" \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-**6. Remove a CNI directory that CRI-O creates, but we don't need**
-```bash
-sudo rm -rf /etc/cni
-```
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/${KUBERNETES_VERSION}/deb/ /" \
+  | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
-## Install kubeadm
-
-**1. Update apt-get**
-```bash
-sudo apt-get update
-```
-
-**2. Install utils for apt-get commands**
-```bash
-sudo apt-get install -y apt-transport-https ca-certificates curl
-```
-
-**3. Configure apt-get cert and repo**
-```bash
-sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-```
-```bash
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-```
-
-**4. Update apt and install `kubelet`, `kubeadm`, and `kubectl`**
-```bash
-sudo apt-get update && sudo apt-get -y install kubelet kubeadm kubectl
-```
-
-**5. Pre-fetch Kubeadm images**
-```bash
-sudo kubeadm config images pull
+sudo apt update
+sudo apt install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
 ```
 
 ## Init Control Plane
 
 This will create a single node control plane. To create a multi-node control plane, replace step one below with these optional directions: [HA cp quick start guide](https://github.com/n8sOrganization/kubeadm-crio-ubu2404/blob/main/ha-cp.md).
 
-**1. Change CIDRs to whatever makes sense for your environment. Will be using IPIP overlay, so as long as they don't overlap with each other or other advertised CIDRs, you are good**
+## Init cluster 
+
 ```bash
-sudo kubeadm init --pod-network-cidr=10.50.0.0/16 --service-cidr=10.100.0.0/16	 --cri-socket='unix:///var/run/crio/crio.sock'
+sudo kubeadm init \
+  --service-cidr=172.16.0.0/12 \
+  --skip-phases=addon/kube-proxy
 ```
 
-**2. Copy kubeconfig file to $HOME/.kube**
+## Configure kubectl
+
 ```bash
-mkdir $HOME/.kube
-sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown -R $(id -u):$(id -g) $HOME/.kube/config
+mkdir -p "$HOME/.kube"
+sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
+sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
 ```
 
-## Install Calico CNI plugin with basic IPIP overlay
+## Check kubectl connection to cluster
 
-**1. Install Calcio operator**
 ```bash
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
+kubectl get nodes
 ```
 
-**2. Apply basic Calico IPIP config
-```yaml
-cat <<EOF | kubectl apply -f -
-apiVersion: operator.tigera.io/v1
-kind: Installation
-metadata:
-  name: default
-  namespace: tigera-operator
-spec:
-  # Configures Calico networking.
-  calicoNetwork:
-    # Note: The ipPools section cannot be modified post-install.
-    ipPools:
-    - blockSize: 26
-      cidr: 10.50.0.0/16
-      encapsulation: IPIP
-      natOutgoing: Enabled
-      nodeSelector: all()
-    ## The following block is to avoid an issue with interface auto-detection.
-    ## If it causes issues for your installation, remove it.
-    nodeAddressAutodetectionV4:
-      kubernetes: NodeInternalIP
-  ## The following block is only added so pods will tolerate 
-  ## controlplane nodes. Not normal. If you plan to add
-  ## a worker node, it can be removed.
-  controlPlaneTolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-    - key: "node-role.kubernetes.io/master"
----
-apiVersion: operator.tigera.io/v1
-kind: APIServer
-metadata:
-  name: default
-spec: {}
-EOF
+## Install the Cilium CLI
+
+```bash
+CILIUM_CLI_VERSION="$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)"
+CLI_ARCH="amd64"
+
+if [ "$(uname -m)" = "aarch64" ]; then
+  CLI_ARCH="arm64"
+fi
+
+curl -L --fail --remote-name-all \
+  "https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz" \
+  "https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz.sha256sum"
+
+sha256sum --check "cilium-linux-${CLI_ARCH}.tar.gz.sha256sum"
+
+sudo tar xzvf "cilium-linux-${CLI_ARCH}.tar.gz" -C /usr/local/bin
+
+rm "cilium-linux-${CLI_ARCH}.tar.gz" "cilium-linux-${CLI_ARCH}.tar.gz.sha256sum"
 ```
+
+## Check Cilium install
+
+```bash
+cilium version --client
+```
+
+## Install Cilium with kube-proxy replacement and custom PodCIDR
+
+```bash
+#Do kubectl get nodes -o wide to find your control plane node IP
+API_SERVER_IP="<CONTROL_PLANE_NODE_IP>"
+API_SERVER_PORT="6443"
+POD_CIDR="10.0.0.0/8"
+
+cilium install \
+  --version 1.19.4 \
+  --set kubeProxyReplacement=true \
+  --set k8sServiceHost="${API_SERVER_IP}" \
+  --set k8sServicePort="${API_SERVER_PORT}" \
+  --set ipam.mode=cluster-pool \
+  --set ipam.operator.clusterPoolIPv4PodCIDRList="{${POD_CIDR}}" \
+  --set ipam.operator.clusterPoolIPv4MaskSize=24
+```
+
+## Wait for Cilium to become ready
+
+```bash
+cilium status --wait
+```
+
+## Now show the join command and use it on another Ubuntun node prepared as above to join as worker node
 
 ## Join a Worker Node
 
 To complete your cluster, repeat the disable swap, enable ip forward, add br_netfilter module, and the installation steps for Kubeadm on a fresh Linux host. Then submit the `join` command on that host.
 
-**1. From the control plane node**
+## From the control plane node**
 ```bash
 sudo kubeadm token create --print-join-command
 ```
 
-**2. On a fresh node with Kubeadm installed, apply the `join` command from step 1 (prepend with `sudo`).**
+## On a fresh node with Kubeadm installed, apply the `join` command from step 1 (prepend with `sudo`).**
+
+For storage, use Longhorn
 
 ## Install Longhorn for peristent storage
 
@@ -214,39 +178,6 @@ _Check for latest version [here](https://github.com/longhorn/longhorn)_
 kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
 ```
 
-## Install MetalLB and Contour
-
-_Note: You can use kube-vip instead of MetalLB as a Cloud Provider to manage service exposure. [See directions here](https://kube-vip.io/docs/usage/cloud-provider/)._
-
-_Check for latest version [here](https://github.com/metallb/metallb)_
-
-```bash
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
-```
-
-Config:
-```yaml
-cat <<EOF | kubectl apply -f -
-apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
-metadata:
-  name: first-pool
-  namespace: metallb-system
-spec:
-  addresses:
-  - 192.168.253.1-192.168.253.254
----
-apiVersion: metallb.io/v1beta1
-kind: L2Advertisement
-metadata:
-  name: l2-mode
-  namespace: metallb-system
-EOF
-```
-
-```bash
-kubectl apply -f https://projectcontour.io/quickstart/contour.yaml
-```
 
 # Upgrade Cluster Version
 
@@ -261,7 +192,7 @@ Check https://github.com/kubernetes/kubernetes/releases for available releases
 For bins:
 
 ```bash
-apt-cache policy kubeadm | grep <version, e.g. 1.26>
+apt-cache policy kubeadm | grep <version>
 ```
 
 **Step 2. Set environment vars**
