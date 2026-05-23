@@ -1,9 +1,4 @@
-# Installing CRI-O, Kubernetes with Kubeadm, MetalLB, Contour, Calico, and Longhorn on Ubuntu Server (Plus Kubeadm cluster upgrade steps)
-
-## Update for 2026
-I recently went through this with a colleague and found that the once difficult to install on Ubunutu CRI-O, is now the next to impossible to install. At least that was my experience with little patience for trouble shooting. So I've updated this recipe to use containerd.
-
-Long story short, install containerd for Ubuntu and then use Cilium CNI plugin. Cilium provides all of the functionality of Calico, MetalLB, Envoy, plus more.
+# Updated 2026. Install K8s with Kubeadm and Cilium
 
 ## Prep node:
 
