@@ -161,7 +161,7 @@ To complete your cluster, repeat the disable swap, enable ip forward, add br_net
 sudo kubeadm token create --print-join-command
 ```
 
-## On a fresh node with Kubeadm installed, apply the `join` command from step 1 (prepend with `sudo`).**
+## On a fresh node with Kubeadm installed, apply the `join` command from step 1
 
 For storage, use Longhorn
 
