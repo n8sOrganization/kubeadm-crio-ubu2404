@@ -170,7 +170,7 @@ For storage, use Longhorn
 _Check for latest version [here](https://github.com/longhorn/longhorn)_
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.0/deploy/longhorn.yaml
+kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.11.2/deploy/longhorn.yaml
 ```
 
 
