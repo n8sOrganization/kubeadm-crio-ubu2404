@@ -11,7 +11,7 @@ sudo apt install -y apt-transport-https ca-certificates curl gpg
 
 ```bash
 sudo swapoff -a
-sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+sudo sed -i '/[[:space:]]swap[[:space:]]/ s/^/#/' /etc/fstab
 ```
 
 ## Load required kernel modules
