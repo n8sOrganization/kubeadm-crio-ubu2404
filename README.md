@@ -129,9 +129,7 @@ cilium version --client
 ## Install Cilium with kube-proxy replacement and custom PodCIDR
 
 ```bash
-# Do kubectl get nodes -o wide to find your control plane node IP
-# DO NOT MISS THIS NEXT STEP. YOU MUST SET THIS API SERVER IP VALUE
-API_SERVER_IP="<CONTROL_PLANE_NODE_IP>"
+API_SERVER_IP=$(hostname -I | awk '{print $1}')
 API_SERVER_PORT="6443"
 POD_CIDR="10.0.0.0/8"
 ```
