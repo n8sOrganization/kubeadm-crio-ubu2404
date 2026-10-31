@@ -180,9 +180,21 @@ For storage, use Longhorn
 _Check for latest version [here](https://github.com/longhorn/longhorn)_
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.12.1/deploy/longhorn.yaml
-```
+helm repo add longhorn https://charts.longhorn.io
+helm repo update
 
+helm install longhorn longhorn/longhorn \
+  --namespace longhorn-system --create-namespace \
+  --version 1.12.1 \
+  --set longhornUI.replicas=1 \
+  --set csi.attacherReplicaCount=1 \
+  --set csi.provisionerReplicaCount=1 \
+  --set csi.resizerReplicaCount=1 \
+  --set csi.snapshotterReplicaCount=1 \
+  --set defaultSettings.defaultReplicaCount=1 \
+  --set persistence.defaultClassReplicaCount=1 \
+  --set preUpgradeChecker.jobEnabled=false
+```
 
 # Upgrade Cluster Version
 
