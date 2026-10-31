@@ -99,6 +99,12 @@ sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
 kubectl get nodes
 ```
 
+## For lab, make control plane schedulable
+
+```bash
+kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
+```
+
 ## Install the Cilium CLI 
 
 ```bash
