@@ -1,6 +1,8 @@
 # Updated 2026. Install K8s with Kubeadm and Cilium
 
-## Prep node:
+_Note: This install path is for AMD based processors. Specifically, tested on Mac M series. For x86, please run them through an AI assistant for suggested modification._
+
+## Prep node (Ubuntu used for this case):
 
 ```bash
 sudo apt update
@@ -99,6 +101,13 @@ sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
 kubectl get nodes
 ```
 
+## Install Helm
+```bash
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
 ## For lab, make control plane schedulable
 
 ```bash
@@ -135,15 +144,22 @@ cilium version --client
 ## Install Cilium with kube-proxy replacement and custom PodCIDR
 
 ```bash
+# Change version of cilium if there is newer.
 API_SERVER_IP=$(hostname -I | awk '{print $1}')
 API_SERVER_PORT="6443"
 POD_CIDR="10.0.0.0/8"
+CILIUM_VERSION="1.19.5"
 ```
 
 ```bash
-# Change version of cilium if there is newer.
-cilium install \
-  --version 1.19.4 \
+helm repo add cilium https://helm.cilium.io/
+helm repo update
+```
+
+```bash
+helm install cilium cilium/cilium \
+  --namespace kube-system \
+  --version "${CILIUM_VERSION}" \
   --set kubeProxyReplacement=true \
   --set k8sServiceHost="${API_SERVER_IP}" \
   --set k8sServicePort="${API_SERVER_PORT}" \
