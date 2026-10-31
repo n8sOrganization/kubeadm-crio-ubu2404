@@ -154,6 +154,8 @@ cilium install \
 
 ## Wait for Cilium to become ready
 
+_Skip this step if you didn't make the control plane schedulable. Move to adding worker nodes._
+
 ```bash
 cilium status --wait
 ```
