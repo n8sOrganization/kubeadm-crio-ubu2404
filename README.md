@@ -120,7 +120,7 @@ sudo tar xzvf "cilium-linux-${CLI_ARCH}.tar.gz" -C /usr/local/bin
 rm "cilium-linux-${CLI_ARCH}.tar.gz" "cilium-linux-${CLI_ARCH}.tar.gz.sha256sum"
 ```
 
-## Check Cilium install
+## Check Cilium CLI install
 
 ```bash
 cilium version --client
@@ -129,8 +129,8 @@ cilium version --client
 ## Install Cilium with kube-proxy replacement and custom PodCIDR
 
 ```bash
-#Do kubectl get nodes -o wide to find your control plane node IP
-API_SERVER_IP="<CONTROL_PLANE_NODE_IP>"
+#Do kubectl get nodes -o wide to find your control plane node IP 
+API_SERVER_IP="<CONTROL_PLANE_NODE_IP>" ### <<<------ DO NOT MISS THIS STEP
 API_SERVER_PORT="6443"
 POD_CIDR="10.0.0.0/8"
 
