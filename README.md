@@ -134,7 +134,9 @@ cilium version --client
 API_SERVER_IP="<CONTROL_PLANE_NODE_IP>"
 API_SERVER_PORT="6443"
 POD_CIDR="10.0.0.0/8"
+```
 
+```bash
 # Change version of cilium if there is newer.
 cilium install \
   --version 1.19.4 \
