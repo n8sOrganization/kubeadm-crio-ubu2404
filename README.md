@@ -142,7 +142,7 @@ cilium version --client
 ```
 
 ## Install Cilium with kube-proxy replacement and custom PodCIDR
-This is a minimized install intended for a single not cluster.
+This is a minimized install intended for a single node cluster. Will work with more nodes but not intended for production.
 
 ```bash
 # Change version of cilium if there is newer.
@@ -193,7 +193,7 @@ sudo kubeadm token create --print-join-command
 For storage, use Longhorn
 
 ## Install Longhorn for peristent storage
-This is a minimized install for a single node cluster.
+This is a minimized install for a single node cluster. Will work with more nodes but not intended for production.
 
 ```bash
 sudo apt update
