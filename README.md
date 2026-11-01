@@ -1,4 +1,4 @@
-# Updated 2026. Install K8s with Kubeadm, containerd, and Cilium
+# Lab Install - K8s with Kubeadm, Containerd, Longhorn, and Cilium
 
 _Note: This install path is for AMD based processors. Specifically, tested on Mac M series with Ubuntu VM. For x86, please run them through an AI assistant for suggested modification._
 
