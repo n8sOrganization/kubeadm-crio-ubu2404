@@ -1,6 +1,6 @@
-# Updated 2026. Install K8s with Kubeadm and Cilium
+# Updated 2026. Install K8s with Kubeadm, containerd, and Cilium
 
-_Note: This install path is for AMD based processors. Specifically, tested on Mac M series. For x86, please run them through an AI assistant for suggested modification._
+_Note: This install path is for AMD based processors. Specifically, tested on Mac M series with Ubuntu VM. For x86, please run them through an AI assistant for suggested modification._
 
 ## Prep node (Ubuntu used for this case):
 
