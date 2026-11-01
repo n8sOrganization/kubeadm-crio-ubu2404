@@ -193,6 +193,12 @@ For storage, use Longhorn
 
 ## Install Longhorn for peristent storage
 
+```bash
+sudo apt update
+sudo apt install -y open-iscsi nfs-common
+sudo systemctl enable --now iscsid
+```
+
 _Check for latest version [here](https://github.com/longhorn/longhorn)_
 
 ```bash
