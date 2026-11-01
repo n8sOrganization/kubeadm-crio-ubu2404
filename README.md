@@ -202,12 +202,16 @@ sudo systemctl enable --now iscsid
 _Check for latest version [here](https://github.com/longhorn/longhorn)_
 
 ```bash
+LH_VERSION="1.12.1"
+```
+
+```bash
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
 
 helm install longhorn longhorn/longhorn \
   --namespace longhorn-system --create-namespace \
-  --version 1.12.1 \
+  --version $LH_VERSION \
   --set longhornUI.replicas=1 \
   --set csi.attacherReplicaCount=1 \
   --set csi.provisionerReplicaCount=1 \
